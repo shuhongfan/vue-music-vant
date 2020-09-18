@@ -34,6 +34,34 @@
         <van-button type="info" round icon="down">下载歌曲</van-button>
       </van-col>
     </van-row>
+    <div class="comments" v-if="hotComments[0]">
+      <h4>热门评论</h4>
+      <div v-for="item in hotComments" :key="item.id">
+        <div>
+          <img :src="item.user.avatarUrl" alt="">
+        </div>
+        <div>
+          <div class="top">
+            <h5>{{item.user.nickname}}</h5>
+            <p>{{item.time | dateformat}}</p>
+          </div>
+          <p>{{item.content}}</p>
+          <div v-if="item.beReplied[0]" class="beReplied">
+            <p>
+              <van-tag type="primary">{{item.beReplied[0].user.nickname}}</van-tag>
+              {{item.beReplied[0].content}}
+            </p>
+          </div>
+        </div>
+      </div>
+      <van-pagination
+        @change="currentPageChange"
+        v-model="currentPage"
+        :total-items="total"
+        :show-page-size="3"
+        force-ellipses
+      />
+    </div>
     <Aplayer
       :autoplay='true'
       v-if="musicUrl"
@@ -66,7 +94,11 @@ export default {
       songName: '',
       songPicUrl: '',
       songArtist: '',
-      Lyric: ''
+      Lyric: '',
+      hotComments: [],
+      total: 0,
+      currentPage: 1,
+      limit: 10
     }
   },
   computed: {
@@ -101,6 +133,7 @@ export default {
       await this.getMusic()
       await this.getSongDetail()
       await this.getLyric()
+      await this.getSongComment()
       await setTimeout(() => {
         console.log(this.playLists.findIndex(item => item.title === this.songName))
         if (this.playLists.findIndex(item => item.title === this.songName) === -1) {
@@ -147,6 +180,19 @@ export default {
       console.log(result)
       this.Lyric = result.data.lrc.lyric
     },
+    async getSongComment () {
+      const result = await this.axios.get('/comment/hot', {
+        params: {
+          id: this.musicId,
+          type: 0,
+          limit: this.limit,
+          offset: (this.currentPage - 1) * this.limit
+        }
+      })
+      console.log(result)
+      this.hotComments = result.data.hotComments
+      this.total = result.data.total
+    },
     play () {
       this.setFlag(0)
       setTimeout(() => {
@@ -167,6 +213,9 @@ export default {
       } else {
         this.pause()
       }
+    },
+    currentPageChange () {
+      this.getSongComment()
     }
   }
 }
@@ -174,7 +223,7 @@ export default {
 
 <style scoped lang="less">
 .box{
-  height: 1000px;
+  padding-bottom: 150px;
 }
 .van-col{
   position: relative;
@@ -260,6 +309,46 @@ export default {
   width: 100%;
   margin-top: 50px;
   margin-bottom: 10px;
+}
+.comments{
+  padding: 10px;
+  position: relative;
+  div{
+    background-color: #fafafa;
+    margin: 5px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    div:first-child{
+      flex: 1;
+      align-items: center;
+    }
+    div:last-child{
+      flex: 6;
+      display: flex;
+      flex-direction: column;
+      .top{
+        justify-content: space-between;
+      }
+      .beReplied{
+        background-color: #e6e5e6;
+      }
+      h5{
+        margin: 10px;
+      }
+      p{
+        font-size: 10px;
+        line-height: 18px;
+        margin-left: 10px;
+      }
+    }
+    img{
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      padding-right: 10px;
+    }
+  }
 }
 .aplayer{
   width: 100%;

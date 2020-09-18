@@ -15,7 +15,15 @@ import {
   row,
   col,
   Tabbar,
-  TabbarItem
+  TabbarItem,
+  DropdownMenu,
+  DropdownItem,
+  Pagination,
+  Panel,
+  Search,
+  Tag,
+  Collapse,
+  CollapseItem
 } from 'vant'
 
 Vue.use(Button)
@@ -36,3 +44,11 @@ Vue.use(row)
 Vue.use(col)
 Vue.use(Tabbar)
 Vue.use(TabbarItem)
+Vue.use(DropdownMenu)
+Vue.use(DropdownItem)
+Vue.use(Pagination)
+Vue.use(Panel)
+Vue.use(Search)
+Vue.use(Tag)
+Vue.use(Collapse)
+Vue.use(CollapseItem)

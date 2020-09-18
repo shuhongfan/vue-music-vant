@@ -5,6 +5,7 @@ import Index from '@/views/Index/Index'
 import PlayLists from '@/views/PlayLists/PlayLists'
 import PlayMusic from '@/views/PlayMusic/PlayMusic'
 import PlayMV from '@/views/PlayMV/PlayMV'
+import Search from '@/views/Search/Search'
 
 Vue.use(VueRouter)
 
@@ -32,6 +33,11 @@ const routes = [
     path: '/playmv/:mvID',
     name: 'PlayMV',
     component: PlayMV
+  },
+  {
+    path: '/search/:keyword',
+    name: 'Search',
+    component: Search
   }
 ]
 
