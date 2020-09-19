@@ -115,7 +115,6 @@ export default {
   },
   mounted () {
     this.getPlayLists()
-    this.getPlaylistDetail()
     this.getHotComments()
     this.getLatestComments()
   },
