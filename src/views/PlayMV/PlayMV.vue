@@ -3,9 +3,12 @@
     <van-nav-bar
       :title="MVDetail.name + '  ' + MVDetail.artists[0].name"
       left-text="返回"
+      right-text="首页"
       left-arrow
       fixed
+      placeholder
       @click-left="onClickLeft"
+      @click-right="onClickRight"
     />
     <VueVideoPlayer></VueVideoPlayer>
     <van-collapse v-model="activeNames">
@@ -125,9 +128,10 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setMVID']),
+    ...mapMutations(['setMVID', 'setFlag']),
     async init () {
       await this.setMVID(this.$route.params.mvID)
+      await this.setFlag(1)
       await this.getMVDetail()
       await this.getArtistsDetail()
       await this.getSimiMV()
@@ -136,6 +140,11 @@ export default {
     onClickLeft () {
       this.$toast('返回')
       this.$router.go(-1)
+      this.setFlag(0)
+    },
+    onClickRight () {
+      this.$toast('返回首页')
+      this.$router.push('/')
     },
     async getMVDetail () {
       const result = await this.axios.get('/mv/detail', {
@@ -168,6 +177,7 @@ export default {
     goMVs (id) {
       this.mvID = id
       this.setMVID(this.mvID)
+      this.currentPage = 1
       this.$router.push('/playmv/' + this.mvID)
       this.init()
     },

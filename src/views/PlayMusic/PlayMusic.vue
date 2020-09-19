@@ -3,25 +3,21 @@
     <van-nav-bar
       :title="songName + '  ' + songArtist"
       left-text="返回"
+      right-text="首页"
       left-arrow
       placeholder
       @click-left="onClickLeft"
+      @click-right="onClickRight"
     />
     <!-- 居中 -->
     <van-row type="flex" justify="center">
       <van-col span="6">
-        <div class="player_con" :class="{playing:flag===0}" @click="aplayerPause" :key="flag">
+        <div class="player_con playing" :class="{playing:flag===0}" :key="flag">
           <img src="./images/player_bar.png" class="play_bar" />
           <!-- 黑胶碟片 -->
           <img src="./images/disc.png" class="disc autoRotate" />
           <img v-if="!songPicUrl" src="./images/cover.png" class="cover autoRotate" />
           <img v-if="songPicUrl" :src="songPicUrl" class="cover autoRotate" />
-          <transition name="van-fade">
-            <van-icon name="play-circle" v-if="flag===0" class="play-icon"/>
-          </transition>
-          <transition name="van-fade">
-            <van-icon name="pause-circle" v-if="flag===-1" class="pause-icon"/>
-          </transition>
         </div>
       </van-col>
     </van-row>
@@ -31,7 +27,8 @@
     </div>
     <van-row>
       <van-col span="8" offset="8">
-        <van-button type="info" round icon="down">下载歌曲</van-button>
+        <van-button @click="playMusic" type="info" round icon="music-o">播放歌曲</van-button>
+        <van-button v-if="MVID" @click="playMv" type="info" round icon="play-circle-o">播放MV</van-button>
       </van-col>
     </van-row>
     <div class="comments" v-if="hotComments[0]">
@@ -62,43 +59,23 @@
         force-ellipses
       />
     </div>
-    <Aplayer
-      :autoplay='true'
-      v-if="musicUrl"
-      ref="player"
-      :showLrc="true"
-      :float="true"
-      :mutex="true"
-      :controls="true"
-      :list="playLists"
-      repeat="repeat-all"
-      :music="{
-            title: this.songName,
-            artist: this.songArtist,
-            src: this.musicUrl,
-            pic: this.songPicUrl,
-            lrc: this.Lyric
-          }"
-    />
   </div>
 </template>
 
 <script>
 import { mapState, mapMutations } from 'vuex'
-import Aplayer from 'vue-aplayer'
 export default {
   name: 'PlayMusic',
   data () {
     return {
-      musicUrl: '',
       songName: '',
       songPicUrl: '',
       songArtist: '',
-      Lyric: '',
       hotComments: [],
       total: 0,
       currentPage: 1,
-      limit: 10
+      limit: 10,
+      MVID: ''
     }
   },
   computed: {
@@ -110,55 +87,18 @@ export default {
       if (val) {
         this.init()
       }
-    },
-    '$store.state.flag': function (val) {
-      console.log(val)
-      if (val === 0) {
-        this.play()
-      } else {
-        this.pause()
-      }
     }
   },
   mounted () {
     this.init()
   },
-  components: {
-    Aplayer
-  },
   methods: {
-    ...mapMutations(['setPlayLists', 'setFlag', 'cleanMusicID', 'setMusicID']),
+    ...mapMutations(['setPlayLists', 'setFlag', 'cleanMusicID', 'setMusicID', 'setMVID']),
     async init () {
       await this.setMusicID(this.$route.params.musicId)
-      await this.getMusic()
+      await this.setFlag(0)
       await this.getSongDetail()
-      await this.getLyric()
       await this.getSongComment()
-      await setTimeout(() => {
-        console.log(this.playLists.findIndex(item => item.title === this.songName))
-        if (this.playLists.findIndex(item => item.title === this.songName) === -1) {
-          this.setPlayLists({
-            title: this.songName,
-            artist: this.songArtist,
-            src: this.musicUrl,
-            pic: this.songPicUrl,
-            lrc: this.Lyric
-          })
-        }
-      }, 1000)
-      await setTimeout(() => {
-        this.play()
-        this.setFlag(0)
-      }, 1200)
-    },
-    async getMusic () {
-      const result = await this.axios.get('/song/url', {
-        params: {
-          id: this.musicId
-        }
-      })
-      console.log(result)
-      this.musicUrl = result.data.data[0].url
     },
     async getSongDetail () {
       const result = await this.axios.get('/song/detail', {
@@ -170,15 +110,7 @@ export default {
       this.songName = result.data.songs[0].name
       this.songPicUrl = result.data.songs[0].al.picUrl
       this.songArtist = result.data.songs[0].ar[0].name
-    },
-    async getLyric () {
-      const result = await this.axios.get('/lyric', {
-        params: {
-          id: this.musicId
-        }
-      })
-      console.log(result)
-      this.Lyric = result.data.lrc.lyric
+      this.MVID = result.data.songs[0].mv
     },
     async getSongComment () {
       const result = await this.axios.get('/comment/hot', {
@@ -193,29 +125,25 @@ export default {
       this.hotComments = result.data.hotComments
       this.total = result.data.total
     },
-    play () {
-      this.setFlag(0)
-      setTimeout(() => {
-        this.$refs.player.play()
-      }, 100)
-    },
-    pause () {
-      this.setFlag(-1)
-      this.$refs.player.pause()
-    },
     onClickLeft () {
       this.$toast('返回')
       this.$router.go(-1)
     },
-    aplayerPause () {
-      if (this.flag === -1) {
-        this.play()
-      } else {
-        this.pause()
-      }
+    onClickRight () {
+      this.$toast('返回首页')
+      this.$router.push('/')
     },
     currentPageChange () {
       this.getSongComment()
+    },
+    playMusic () {
+      this.setFlag(0)
+      this.setMusicID(this.$route.params.musicId)
+    },
+    playMv () {
+      this.setFlag(1)
+      this.setMVID(this.MVID)
+      this.$router.push('/playmv/' + this.MVID)
     }
   }
 }
@@ -223,7 +151,7 @@ export default {
 
 <style scoped lang="less">
 .box{
-  padding-bottom: 150px;
+  padding-bottom: 50px;
 }
 .van-col{
   position: relative;
@@ -307,7 +235,7 @@ export default {
 }
 .van-button{
   width: 100%;
-  margin-top: 50px;
+  margin-top: 30px;
   margin-bottom: 10px;
 }
 .comments{
@@ -349,10 +277,5 @@ export default {
       padding-right: 10px;
     }
   }
-}
-.aplayer{
-  width: 100%;
-  position: fixed;
-  bottom: 0;
 }
 </style>

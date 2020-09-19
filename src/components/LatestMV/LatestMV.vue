@@ -77,7 +77,9 @@ export default {
       })
       console.log(result)
       this.LatestMVList = result.data.data
-      this.total = result.data.count
+      if (this.currentPage === 1) {
+        this.total = result.data.count
+      }
     },
     currentPageChange () {
       this.getLatestMV()

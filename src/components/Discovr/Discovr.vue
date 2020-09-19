@@ -37,7 +37,6 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
 export default {
   name: 'Discovr',
   data () {
@@ -58,7 +57,6 @@ export default {
     this.getRecommendedMV()
   },
   methods: {
-    ...mapMutations(['setMusicID', 'setMVID']),
     async getBanner () {
       const result = await this.axios.get('/banner', {
         params: {
@@ -96,12 +94,10 @@ export default {
     },
     goPlayMusic (id) {
       this.MusicId = id
-      this.setMusicID(this.MusicId)
       this.$router.push('/playmusic/' + this.MusicId)
     },
     goMVs (id) {
       this.MVId = id
-      this.setMVID(this.MVId)
       this.$router.push('/playmv/' + this.MVId)
     }
   }

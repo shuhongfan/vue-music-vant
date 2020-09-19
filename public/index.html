@@ -5,7 +5,19 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-    <title><%= htmlWebpackPlugin.options.title %></title>
+<!--    <title><%= htmlWebpackPlugin.options.title %></title>-->
+      <title><% htmlWebpackPlugin.options.isProd ? '' : 'dev - '%>凡音 - 舒洪凡</title>
+      <% if(htmlWebpackPlugin.options.isProd) { %>
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css">
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css">
+      <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/moment@2.28.0/moment.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/hls.js@0.14.12/dist/hls.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/vue-router@3.4.3/dist/vue-router.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/axios@0.20.0/dist/axios.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/vuex@3.5.1/dist/vuex.min.js"></script>
+      <% } %>
   </head>
   <body>
     <noscript>
