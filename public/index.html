@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+      <title><% htmlWebpackPlugin.options.isProd ? '' : 'dev - '%>凡音 - 舒洪凡</title>
+      <% if(htmlWebpackPlugin.options.isProd) { %>
       <script>
         //判断是否移动端，如果是则跳转到指定的URL地址
         function browserRedirect(url) {
@@ -20,13 +26,6 @@
         }
         browserRedirect("http://mlnz0x.coding-pages.com/");
       </script>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-<!--    <title><%= htmlWebpackPlugin.options.title %></title>-->
-      <title><% htmlWebpackPlugin.options.isProd ? '' : 'dev - '%>凡音 - 舒洪凡</title>
-      <% if(htmlWebpackPlugin.options.isProd) { %>
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css">
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css">
       <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.min.js"></script>
